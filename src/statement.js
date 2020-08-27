@@ -1,7 +1,9 @@
 function statement (invoice, plays) {
-  const format = forUSDFormat();
+  return renderText(getData(invoice, plays));
+}
 
-  const datas = getData(invoice, plays);
+function renderText(datas) {
+  const format = forUSDFormat();
   let result = `Statement for ${datas.customer}\n`;
 
   for (let info of datas.payload) {
@@ -11,40 +13,53 @@ function statement (invoice, plays) {
   result += `Amount owed is ${format(datas.totalAmount / 100)}\n`;
   result += `You earned ${datas.volumeCredits} credits \n`;
   return result;
-
 }
 
 function getData(invoice, plays){
-  let {customer} = invoice;
-  let payload = [];
-  let totalAmount = 0;
-  let volumeCredits = 0;  
-  let result = {customer, payload, totalAmount, volumeCredits};
+  let result = {};
 
+  result.volumeCredits = forVolumeCredits(invoice,plays);
+  result.payload = generatePayLoad(invoice, plays);
+  result.totalAmount = caculateTotalAmount(invoice, plays);
+  result.customer = invoice.customer;
+
+  return result;
+}
+
+function generatePayLoad(invoice, plays){
+  let payload = [];
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     const thisAmount = caculateAmount(play, perf);
 
-    volumeCredits += forVolumeCredits(play, perf);
-    totalAmount += thisAmount;
-
-    result.payload.push({
+    payload.push({
       name : play.name,
       audience : perf.audience,
       amount : thisAmount
     })
   }
-  result.totalAmount = totalAmount;
-  result.volumeCredits = volumeCredits;
 
-  return result;
+  return payload;
 }
 
-function forVolumeCredits(play, perf) {
-  let volumeCredits = Math.max(perf.audience - 30, 0);
+function caculateTotalAmount(invoice, plays){
+  let totalAmount = 0;
+  for (let perf of invoice.performances) {
+      const play = plays[perf.playID];
+      totalAmount += caculateAmount(play, perf);
+  }
+  return totalAmount;
+}
+
+function forVolumeCredits(invoice, plays) {
+
+  let volumeCredits = 0;
+  for (let perf of invoice.performances) {
+    const play = plays[perf.playID];
+    volumeCredits += Math.max(perf.audience - 30, 0);
   
-  // add extra credit for every ten comedy attendees
-  if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
+    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
+  }
 
   return volumeCredits;
 }
