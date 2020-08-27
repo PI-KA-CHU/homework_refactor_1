@@ -8,8 +8,8 @@ function statement (invoice, plays) {
     const play = plays[perf.playID];
     let thisAmount = caculateAmount(play, perf);
 
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
+    volumeCredits += forVolumeCredits(perf);
+
     // add extra credit for every ten comedy attendees
     if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
     
@@ -22,6 +22,10 @@ function statement (invoice, plays) {
   return result;
 
   
+  function forVolumeCredits(perf) {
+    return Math.max(perf.audience - 30, 0);
+  }
+
   function caculateAmount(play, perf) {
     switch (play.type) {
       case 'tragedy':
