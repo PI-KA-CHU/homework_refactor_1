@@ -81,24 +81,35 @@ function forVolumeCredits(invoice, plays) {
 }
 
 function caculateAmount(play, perf) {
+  let thisAmount = 0;
   switch (play.type) {
     case 'tragedy':
-      thisAmount = 40000;
-      if (perf.audience > 30) {
-        thisAmount += 1000 * (perf.audience - 30);
-      }
+      thisAmount = caculateTragedyAmount(perf.audience);
       break;
     case 'comedy':
-      thisAmount = 30000;
-      if (perf.audience > 20) {
-        thisAmount += 10000 + 500 * (perf.audience - 20);
-      }
-      thisAmount += 300 * perf.audience;
+      thisAmount = caculateComedyAmount(perf.audience);
       break;
     default:
       throw new Error(`unknown type: ${play.type}`);
   }
   return thisAmount;
+
+  function caculateComedyAmount(audience) {
+    let result = 30000;
+    if (audience > 20) {
+      result += 10000 + 500 * (audience - 20);
+    }
+    result += 300 * audience;
+    return result;
+  }
+
+  function caculateTragedyAmount(audience) {
+    let result = 40000;
+    if (audience > 30) {
+      result += 1000 * (audience - 30);
+    }
+    return result;
+  }
 }
 
 function forUSDFormat() {
