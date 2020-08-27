@@ -15,6 +15,22 @@ function renderText(datas) {
   return result;
 }
 
+function renderHtml(datas) {
+  const format = forUSDFormat();
+  let result = "";
+
+  result += `<h1>Statement for ${datas.customer}</h1>\n`;
+  result += '<table>\n' + '<tr><th>play</th><th>seats</th><th>cost</th></tr>';
+  for(info in datas.payload){
+    result += ` <tr><td>${info.name}</td><td>${format(info.amount / 100)}</td><td>${info.audience}</td></tr>\n`
+  }
+  result += '</table>\n' +
+    `<p>Amount owed is <em>${format(datas.totalAmount / 100)}</em></p>\n` +
+    `<p>You earned <em>${datas.volumeCredits}</em> credits</p>\n`;
+
+  return result;
+}
+
 function getData(invoice, plays){
   let result = {};
 
