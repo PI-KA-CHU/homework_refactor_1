@@ -75,6 +75,25 @@ test('should_return_Statement for BigCo\n Hamlet: $410.00 (31 seats)\nAmount owe
   + "You earned 1 credits \n");
 });
 
+test('test 4', t => {
+  const invoice = {
+    'customer': 'BigCo',
+    'performances': [
+      {
+        'playID': 'as-like',
+        'audience': 20,
+      }
+    ],
+  };
+
+  const result = statement(invoice, plays);
+  
+  t.is(result, "Statement for BigCo\n"
+  + " As You Like It: $360.00 (20 seats)\n"
+  + "Amount owed is $360.00\n"
+  + "You earned 4 credits \n");
+});
+
   
 const plays = {
   'hamlet': {
