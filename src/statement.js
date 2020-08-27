@@ -81,18 +81,16 @@ function forVolumeCredits(invoice, plays) {
 }
 
 function caculateAmount(play, perf) {
-  let thisAmount = 0;
-  switch (play.type) {
-    case 'tragedy':
-      thisAmount = caculateTragedyAmount(perf.audience);
-      break;
-    case 'comedy':
-      thisAmount = caculateComedyAmount(perf.audience);
-      break;
-    default:
-      throw new Error(`unknown type: ${play.type}`);
+  let strategies = {
+    'tragedy':  caculateTragedyAmount(perf.audience),
+    'comedy': caculateComedyAmount(perf.audience)
   }
-  return thisAmount;
+
+  if(!strategies[play.type]){
+    throw new Error(`unknown type: ${play.type}`)
+  }
+
+  return strategies[play.type];
 
   function caculateComedyAmount(audience) {
     let result = 30000;
